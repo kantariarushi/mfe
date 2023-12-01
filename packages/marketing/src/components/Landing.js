@@ -1,33 +1,36 @@
-import React from 'react';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import MaterialLink from '@material-ui/core/Link';
-import { Link } from 'react-router-dom';
+import React from "react";
+import Button from "@material-ui/core/Button";
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
+import MaterialLink from "@material-ui/core/Link";
+import { Link } from "react-router-dom";
+import Data from "./productData.json";
+import { changeAppNameAction } from "../exports";
+import { useDispatch, useSelector } from "react-redux";
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
+      {"Copyright © "}
       <MaterialLink component={Link} to="/" color="inherit">
         Your Website
-      </MaterialLink>{' '}
+      </MaterialLink>{" "}
       {new Date().getFullYear()}
-      {'.'}
+      {"."}
     </Typography>
   );
 }
 
 const useStyles = makeStyles((theme) => ({
-  '@global': {
+  "@global": {
     a: {
-      textDecoration: 'none',
+      textDecoration: "none",
     },
   },
   icon: {
@@ -45,12 +48,13 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(8),
   },
   card: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
   },
   cardMedia: {
-    paddingTop: '56.25%', // 16:9
+    paddingTop: "50.25%", // 16:9
+    backgroundSize: "contain",
   },
   cardContent: {
     flexGrow: 1,
@@ -65,7 +69,18 @@ const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export default function Album() {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state);
+  const checkIfProductInCartOrNot = (id) => {
+    const isFound = state?.app1?.appName?.some((element) => {
+      if (element.id === id) {
+        return true;
+      }
 
+      return false;
+    });
+    return isFound;
+  };
   return (
     <React.Fragment>
       <main>
@@ -79,7 +94,7 @@ export default function Album() {
               color="textPrimary"
               gutterBottom
             >
-              Home Page
+              Toy Store
             </Typography>
             <Typography
               variant="h5"
@@ -87,11 +102,12 @@ export default function Album() {
               color="textSecondary"
               paragraph
             >
-              Something short and leading about the collection below—its
-              contents, the creator, etc. Make it short and sweet, but not too
-              short so folks don&apos;t simply skip over it entirely.
+              The toy store is more than just a place to buy toys. It's a place
+              where dreams come to life, where imaginations run wild, and where
+              memories are made. It's a magical place where kids can be kids,
+              and adults can relive the joys of childhood.
             </Typography>
-            <div className={classes.heroButtons}>
+            {/* <div className={classes.heroButtons}>
               <Grid container spacing={2} justify="center">
                 <Grid item>
                   <Link to="/pricing">
@@ -108,36 +124,71 @@ export default function Album() {
                   </Link>
                 </Grid>
               </Grid>
-            </div>
+            </div> */}
           </Container>
         </div>
         <Container className={classes.cardGrid} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
-            {cards.map((card) => (
+            {Data.map((card) => (
               <Grid item key={card} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
                   <CardMedia
                     className={classes.cardMedia}
-                    image="https://source.unsplash.com/random"
+                    image={card.image}
                     title="Image title"
                   />
                   <CardContent className={classes.cardContent}>
                     <Typography gutterBottom variant="h5" component="h2">
-                      Heading
+                      {card.name.length > 40
+                        ? card.name.substring(0, 40 - 3) + "..."
+                        : card.name}
                     </Typography>
-                    <Typography>
-                      This is a media card. You can use this section to describe
-                      the content.
+                    <Typography variant="h5" component="h2">
+                      {`Rs. ${card.price}`}
                     </Typography>
                   </CardContent>
-                  <CardActions>
-                    <Button size="small" color="primary">
-                      View
-                    </Button>
-                    <Button size="small" color="primary">
-                      Edit
-                    </Button>
+                  <CardActions style={{ alignSelf: "flex-end" }}>
+                    {!checkIfProductInCartOrNot(card.id) ||
+                      state?.app1?.appName?.find(
+                        (item) => item.id === card.id && item
+                      ).count === 0 ? (
+                      <Button
+                        onClick={() =>
+                          dispatch(changeAppNameAction(card, "plus"))
+                        }
+                        size="small"
+                        color="primary"
+                      >
+                        Add to cart
+                      </Button>
+                    ) : (
+                      <div>
+                        <span
+                          onClick={() =>
+                            dispatch(changeAppNameAction(card, "minus"))
+                          }
+                          style={{ cursor: "pointer" }}
+                        >
+                          minus
+                        </span>
+                        <span style={{ marginLeft: 20 }}>
+                          {
+                            state?.app1?.appName?.find(
+                              (item) => item.id === card.id && item
+                            ).count
+                          }
+                        </span>
+                        <span
+                          style={{ marginLeft: 20, cursor: "pointer" }}
+                          onClick={() =>
+                            dispatch(changeAppNameAction(card, "plus"))
+                          }
+                        >
+                          plush
+                        </span>
+                      </div>
+                    )}
                   </CardActions>
                 </Card>
               </Grid>

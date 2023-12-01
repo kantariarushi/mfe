@@ -5,6 +5,10 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link as RouterLink } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { changeAppNameAction } from 'marketing/Exports';
+import { useSelector } from "react-redux";
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   '@global': {
@@ -56,13 +60,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Header({ isSignedIn, onSignOut }) {
   const classes = useStyles();
-
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state);
   const onClick = () => {
     if (isSignedIn && onSignOut) {
       onSignOut();
     }
   };
-
+  console.log('isSignedIn ------>', isSignedIn);
   return (
     <React.Fragment>
       <AppBar
@@ -81,16 +86,30 @@ export default function Header({ isSignedIn, onSignOut }) {
           >
             App
           </Typography>
-          <Button
-            color="primary"
-            variant="outlined"
-            className={classes.link}
-            component={RouterLink}
-            to={isSignedIn ? '/' : '/auth/signin'}
-            onClick={onClick}
-          >
-            {isSignedIn ? 'Logout' : 'Login'}
-          </Button>
+          <div style={{ display: "flex" }}>
+            <Link to="/cart/signin" style={{ display: "flex", flexDirection: "row", marginRight: 20 }}>
+              <img
+                src={"https://cdn-icons-png.flaticon.com/512/263/263142.png"}
+                height={25}
+                width={25}
+              />
+              {state?.app1?.appName?.length > 0 &&
+                <div style={{ height: 20, width: 20, borderRadius: 10 }}>
+                  <span>{state?.app1?.appName?.length}</span>
+                </div>
+              }
+            </Link>
+            <Button
+              color="primary"
+              variant="outlined"
+              className={classes.link}
+              component={RouterLink}
+              to={isSignedIn ? '/' : '/auth/signin'}
+              onClick={onClick}
+            >
+              {isSignedIn ? 'Logout' : 'Login'}
+            </Button>
+          </div>
         </Toolbar>
       </AppBar>
     </React.Fragment>

@@ -2,13 +2,13 @@ import React, {useRef, useEffect} from 'react';
 import { mount } from 'marketing/MarketingApp';
 import { useHistory } from 'react-router-dom';
 
-export default () => {
+export default (props) => {
     const ref = useRef(null);
     const history = useHistory();
-
     useEffect(() => {
         const { onParentNavigate } = mount(ref.current, {
             initialPath: history.location.pathname,
+            store: props.store,
             onNavigate: ({ pathname: nextPathname }) => {
                 const {pathname} = history.location;
                 if(pathname !== nextPathname){
@@ -16,7 +16,6 @@ export default () => {
                 }
             }
         });
-
         history.listen(onParentNavigate)
     }, []);
 

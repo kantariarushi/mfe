@@ -7,23 +7,25 @@ const packageJson = require('../package.json')
 const devConfig = {
     mode: 'development',
     output: {
-        publicPath: 'http://localhost:8081/'
+        publicPath: 'http://localhost:8085/'
     },
     devServer: {
-        port: 8081,
+        port: 8085,
         historyApiFallback: {
             index: '/index.html'
         }
     },
     plugins: [
         new ModuleFederationPlugin({
-            name: 'maketing',
+            name: 'toycart',
             filename: 'remoteEntry.js',
             exposes: {
-                './MarketingApp': './src/bootstrap',
-                './Exports': './src/exports.js',
+                './ToycartApp': './src/bootstrap'
             },
             shared: packageJson.dependencies,
+            remotes: {
+                marketing: 'maketing@http://localhost:8081/remoteEntry.js'
+            },
         }),
         new HtmlWebpackPlugin({
             template: './public/index.html'
