@@ -6,7 +6,6 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link as RouterLink } from 'react-router-dom';
 import { useDispatch } from "react-redux";
-import { changeAppNameAction } from 'marketing/Exports';
 import { useSelector } from "react-redux";
 import { Link } from 'react-router-dom';
 
